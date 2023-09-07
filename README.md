@@ -1,0 +1,2 @@
+# observatory
+CometBFT node monitoring
