@@ -1,0 +1,12 @@
+[package]
+name = "observatory"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+futures = "0.3"
+tendermint = "0.33"
+tendermint-rpc = { version = "0.33", features = ["http-client"] }
+tokio = "1"
+tracing = "0.1"
+tracing-subscriber = "0.2"
