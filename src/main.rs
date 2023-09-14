@@ -44,7 +44,11 @@ async fn main() {
             .parse::<account::Id>()
             .unwrap();
 
-        let rpc_urls = ["https://osmosis-rpc.polkachu.com/".into()];
+        let rpc_urls = [
+            "https://osmosis-rpc.polkachu.com/".into(),
+            "https://osmosis-rpc.publicnode.com/".into(),
+            "https://rpc.dev-osmosis.zone/".into()
+        ];
 
         run_monitor(chain_id, validator_addr, rpc_urls).await
     };
