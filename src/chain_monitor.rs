@@ -71,7 +71,7 @@ impl ChainMonitor {
         info!(
             "[{}] initialized at height {}",
             chain_monitor.chain_id(),
-            chain_monitor.block_height
+            block_height_with_commas(chain_monitor.block_height)
         );
 
         chain_monitor
@@ -132,7 +132,7 @@ impl ChainMonitor {
                             info!(
                                 "[{}] imported block {} [{}] ({} secs)",
                                 self.chain_id(),
-                                next_height,
+                                block_height_with_commas(next_height),
                                 &block_id.to_string()[..10],
                                 duration.as_millis() as f64 / 1000.0
                             );
@@ -234,4 +234,16 @@ impl ChainMonitor {
 
         duration.div_f64(divisor)
     }
+}
+
+/// Helper function to format block heights with commas
+fn block_height_with_commas(height: block::Height) -> String {
+    height.to_string()
+        .as_bytes()
+        .rchunks(3)
+        .rev()
+        .map(std::str::from_utf8)
+        .collect::<Result<Vec<&str>, _>>()
+        .expect("block height should be a valid string")
+        .join(",")
 }
