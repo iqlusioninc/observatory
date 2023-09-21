@@ -238,7 +238,8 @@ impl ChainMonitor {
 
 /// Helper function to format block heights with commas
 fn block_height_with_commas(height: block::Height) -> String {
-    height.to_string()
+    height
+        .to_string()
         .as_bytes()
         .rchunks(3)
         .rev()
