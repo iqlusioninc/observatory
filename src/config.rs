@@ -5,41 +5,27 @@
 //! for specifying it.
 
 use serde::{Deserialize, Serialize};
+use tendermint::{account, chain};
+
+/// Observatory Configuration
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ObservatoryConfig {
+    /// Chain configurations.
+    #[serde(rename = "chain")]
+    pub chains: Vec<ChainConfig>
+}
 
 /// Observatory Configuration
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct ObservatoryConfig {
-    /// An example configuration section
-    pub hello: ExampleSection,
-}
+pub struct ChainConfig {
+    /// Chain ID
+    pub id: chain::Id,
 
-/// Default configuration settings.
-///
-/// Note: if your needs are as simple as below, you can
-/// use `#[derive(Default)]` on ObservatoryConfig instead.
-impl Default for ObservatoryConfig {
-    fn default() -> Self {
-        Self {
-            hello: ExampleSection::default(),
-        }
-    }
-}
+    /// Validator Addr
+    pub validator_addr: account::Id,
 
-/// Example configuration section.
-///
-/// Delete this and replace it with your actual configuration structs.
-#[derive(Clone, Debug, Deserialize, Serialize)]
-#[serde(deny_unknown_fields)]
-pub struct ExampleSection {
-    /// Example configuration value
-    pub recipient: String,
-}
-
-impl Default for ExampleSection {
-    fn default() -> Self {
-        Self {
-            recipient: "world".to_owned(),
-        }
-    }
+    /// RPC URLs
+    pub rpc_urls: Vec<String>,
 }
