@@ -30,7 +30,6 @@ impl Runnable for StartCmd {
     /// Start the application.
     fn run(&self) {
         let config = APP.config();
-        dbg!(&config);
         abscissa_tokio::run(&APP, async {
             let mut futures = Vec::new();
 
@@ -56,9 +55,7 @@ impl config::Override<ObservatoryConfig> for StartCmd {
     }
 }
 
-async fn run_monitor(
-    config: ChainConfig,
-) -> JoinHandle<()> {
+async fn run_monitor(config: ChainConfig) -> JoinHandle<()> {
     tokio::spawn(async move {
         let chain_id = config.id;
         let validator_addr = config.validator_addr;

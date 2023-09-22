@@ -13,7 +13,7 @@ use tendermint::{account, chain};
 pub struct ObservatoryConfig {
     /// Chain configurations.
     #[serde(rename = "chain")]
-    pub chains: Vec<ChainConfig>
+    pub chains: Vec<ChainConfig>,
 }
 
 /// Observatory Configuration
