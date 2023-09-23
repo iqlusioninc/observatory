@@ -164,6 +164,11 @@ impl ChainMonitor {
         self.chain_state.missed_blocks(validator_address)
     }
 
+    /// Get the count of recent blocks for the given consensus key ID.
+    pub fn recent_blocks(&self, validator_address: account::Id) -> usize {
+        self.chain_state.recent_blocks(validator_address)
+    }
+
     /// Fetch the latest blocks for the given chain.
     async fn fetch_latest_blocks(&self) -> Vec<Result<BlockResponse, RpcError>> {
         self.client_manager

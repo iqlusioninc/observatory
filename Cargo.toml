@@ -13,6 +13,7 @@ tendermint = "0.33"
 tendermint-rpc = { version = "0.33", features = ["http-client"] }
 thiserror = "1"
 tokio = "1"
+tower = { version = "0.4", features = ["buffer", "util"] }
 tracing = "0.1"
 
 [dev-dependencies]

@@ -22,6 +22,7 @@ mod client_manager;
 pub mod commands;
 pub mod config;
 pub mod error;
+mod pager;
 pub mod prelude;
 
 /// URL type.
