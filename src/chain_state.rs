@@ -104,14 +104,25 @@ impl ChainState {
 
         for data in &self.blocks {
             if let Some(commit) = &data.block.last_commit {
-                let has_sig = commit.signatures.iter().any(|sig| {
-                    sig.validator_address()
-                        .map(|addr| addr == validator_address)
-                        .unwrap_or(false)
-                });
-
-                if !has_sig {
+                if !has_sig(commit, validator_address) {
                     result += 1;
+                }
+            }
+        }
+
+        result
+    }
+
+    /// Count the number of recently signed blocks for the given consensus key.
+    pub fn recent_blocks(&self, validator_address: account::Id) -> usize {
+        let mut result = 0;
+
+        for data in &self.blocks {
+            if let Some(commit) = &data.block.last_commit {
+                if has_sig(commit, validator_address) {
+                    result += 1;
+                } else {
+                    return result;
                 }
             }
         }
@@ -137,4 +148,13 @@ impl BlockData {
     pub fn time(&self) -> Time {
         self.block.header.time
     }
+}
+
+/// Check if the given commit has a signature for the given validator.
+fn has_sig(commit: &block::Commit, validator_address: account::Id) -> bool {
+    commit.signatures.iter().any(|sig| {
+        sig.validator_address()
+            .map(|addr| addr == validator_address)
+            .unwrap_or(false)
+    })
 }

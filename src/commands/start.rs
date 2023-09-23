@@ -1,17 +1,17 @@
 //! `start` subcommand - example of how to write a subcommand
 
-/// App-local prelude includes `app_reader()`/`app_writer()`/`app_config()`
-/// accessors along with logging macros. Customize as you see fit.
-use crate::prelude::*;
-
-use crate::config::{ChainConfig, ObservatoryConfig};
-
+use crate::{
+    chain_monitor::ChainMonitor,
+    client_manager::ClientManager,
+    config::{ChainConfig, ObservatoryConfig},
+    pager::{monitor_pager_service, PagerRequest, PagerService},
+    prelude::*,
+};
 use abscissa_core::{config, Command, FrameworkError, Runnable};
-
-use crate::{chain_monitor::ChainMonitor, client_manager::ClientManager};
 use futures::future;
+use std::time::Duration;
 use tokio::task::JoinHandle;
-use tracing::{info, warn};
+use tower::{Service, ServiceExt};
 
 /// `start` subcommand
 ///
@@ -30,12 +30,29 @@ impl Runnable for StartCmd {
     /// Start the application.
     fn run(&self) {
         let config = APP.config();
+        let alerting_interval = Duration::from_secs(5);
+        let missing_blocks_threshold = 5;
+        let recovered_after_threshold = 5;
+
+        if config.chains.is_empty() {
+            panic!("no chains configured (no 'observatory.toml'?)");
+        }
+
         abscissa_tokio::run(&APP, async {
+            let pager_service = tower::ServiceBuilder::new()
+                .buffer(config.chains.len() * 2) // heuristic
+                .service(PagerService::new(
+                    missing_blocks_threshold,
+                    recovered_after_threshold,
+                ));
+
             let mut futures = Vec::new();
 
             for chain_config in &config.chains {
-                futures.push(run_monitor(chain_config.clone()).await);
+                futures.push(run_monitor(chain_config.clone(), pager_service.clone()).await);
             }
+
+            futures.push(init_pager_monitor(alerting_interval, pager_service.clone()).await);
 
             future::join_all(futures).await;
         })
@@ -55,7 +72,10 @@ impl config::Override<ObservatoryConfig> for StartCmd {
     }
 }
 
-async fn run_monitor(config: ChainConfig) -> JoinHandle<()> {
+async fn run_monitor(
+    config: ChainConfig,
+    mut pager_service: tower::buffer::Buffer<PagerService, PagerRequest>,
+) -> JoinHandle<()> {
     tokio::spawn(async move {
         let chain_id = config.id;
         let validator_addr = config.validator_addr;
@@ -67,16 +87,33 @@ async fn run_monitor(config: ChainConfig) -> JoinHandle<()> {
             ClientManager::new(rpc_urls).expect("couldn't initialize RPC client manager");
 
         let mut monitor = ChainMonitor::new(chain_id.clone(), client_manager).await;
-        let missed_blocks_threshold = 3;
 
         loop {
             monitor.fetch_next_block().await;
 
             let missed_blocks = monitor.missed_blocks(validator_addr);
+            let recent_blocks = monitor.recent_blocks(validator_addr);
 
-            if missed_blocks > missed_blocks_threshold {
-                warn!("{} missed {} blocks!", chain_id, missed_blocks);
-            }
+            pager_service
+                .ready()
+                .await
+                .expect("PagerService not ready")
+                .call(PagerRequest::Event {
+                    chain_id: chain_id.clone(),
+                    missed_blocks,
+                    recent_blocks,
+                })
+                .await
+                .expect("PagerService error");
         }
     })
+}
+
+async fn init_pager_monitor(
+    alerting_interval: Duration,
+    pager_service: tower::buffer::Buffer<PagerService, PagerRequest>,
+) -> JoinHandle<()> {
+    tokio::spawn(
+        async move { monitor_pager_service(alerting_interval, pager_service.clone()).await },
+    )
 }
