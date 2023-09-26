@@ -21,6 +21,7 @@ mod chain_state;
 mod client_manager;
 pub mod commands;
 pub mod config;
+pub mod datadog;
 pub mod error;
 mod pager;
 pub mod prelude;
