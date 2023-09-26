@@ -1,10 +1,13 @@
+use crate::datadog::{send_stream_event, StreamEvent};
 use std::{
     collections::BTreeMap as Map,
+    env,
     fmt::{self, Debug},
     future::Future,
     pin::Pin,
     task::{Context, Poll},
     time::Duration,
+    time::SystemTime,
 };
 use tendermint::chain;
 use tower::{Service, ServiceExt};
@@ -43,6 +46,36 @@ async fn report_alarm(alarm: PagerAlarm) {
         "[{}] missed {} blocks!",
         alarm.chain_id, alarm.missed_blocks
     );
+
+    dbg!(&alarm);
+    let dd_api_key = env::var("DD_API_KEY").unwrap();
+    let hostname = hostname::get().unwrap();
+    let mut ddtags = Map::new();
+    ddtags.insert("env".to_owned(), "staging".to_owned());
+    let stream_event = StreamEvent {
+        aggregation_key: None,
+        alert_type: Some(crate::datadog::AlertType::Error),
+        date_happened: Some(SystemTime::now()),
+        device_name: None,
+        hostname: Some(hostname.to_string_lossy().to_string()),
+        priority: Some(crate::datadog::Priority::Normal),
+        related_event_id: None,
+        tags: Some(ddtags),
+        // Text field must contain @pagerduty to trigger alert
+        text: format!("@pagerduty event: {:?}", &alarm),
+        title: alarm.to_string(),
+    };
+
+    // send stream event to datadog which forwards to pagerduty
+    let stream_event = send_stream_event(&stream_event, dd_api_key).await;
+    match stream_event {
+        Ok(()) => {
+            dbg!("event sent to datadog");
+        }
+        Err(_err) => {
+            warn!("unable to sent event to datadog");
+        }
+    }
 }
 
 /// Pager service.
@@ -123,6 +156,12 @@ pub struct PagerAlarm {
     /// Number of missed blocks.
     // TODO(tarcieri): other types of alarms?
     pub missed_blocks: usize,
+}
+
+impl fmt::Display for PagerAlarm {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} missed {} blocks!", self.chain_id, self.missed_blocks)
+    }
 }
 
 /// Requests sent to the pager service.
