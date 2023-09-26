@@ -30,8 +30,8 @@ impl Runnable for StartCmd {
     /// Start the application.
     fn run(&self) {
         let config = APP.config();
-        let alerting_interval = Duration::from_secs(5);
-        let missing_blocks_threshold = 5;
+        let alerting_interval = Duration::from_secs(120);
+        let missing_blocks_threshold = 50;
         let recovered_after_threshold = 5;
 
         if config.chains.is_empty() {
