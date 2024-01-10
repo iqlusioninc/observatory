@@ -14,9 +14,12 @@ pub struct ObservatoryConfig {
     /// Chain configurations.
     #[serde(rename = "chain")]
     pub chains: Vec<ChainConfig>,
+
+    /// Datadog configuration
+    pub datadog: Option<DataDogConfig>,
 }
 
-/// Observatory Configuration
+/// Chain Configuration
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct ChainConfig {
@@ -28,4 +31,13 @@ pub struct ChainConfig {
 
     /// RPC URLs
     pub rpc_urls: Vec<String>,
+}
+
+
+/// Datadog Configuration
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct DataDogConfig {
+    /// Datadog API Key
+    pub dd_api_key: Option<String>,
 }

@@ -45,3 +45,6 @@ validator_addr = "D542FA46ABFB3D29FE3E284D4380DE231A4791C8"
 rpc_urls = [
     "https://stride-rpc.polkachu.com/",
 ]
+
+[[datadog]]
+dd_api_key = "urdatadogapikeyhere"
