@@ -46,5 +46,5 @@ rpc_urls = [
     "https://stride-rpc.polkachu.com/",
 ]
 
-[[datadog]]
+[datadog]
 dd_api_key = "urdatadogapikeyhere"

@@ -1,7 +1,9 @@
-use crate::datadog::{send_stream_event, StreamEvent};
+use crate::{
+    datadog::{send_stream_event, StreamEvent},
+    prelude::*,
+};
 use std::{
     collections::BTreeMap as Map,
-    env,
     fmt::{self, Debug},
     future::Future,
     pin::Pin,
@@ -48,7 +50,9 @@ async fn report_alarm(alarm: PagerAlarm) {
     );
 
     dbg!(&alarm);
-    let dd_api_key = env::var("DD_API_KEY").unwrap();
+    let config = APP.config();
+    let dd_config = config.datadog.as_ref().expect("no datadog config");
+    let dd_api_key = dd_config.dd_api_key.clone().expect("no datadog API key");
     let hostname = hostname::get().unwrap();
     let mut ddtags = Map::new();
     ddtags.insert("env".to_owned(), "staging".to_owned());

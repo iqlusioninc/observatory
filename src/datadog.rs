@@ -4,11 +4,12 @@
 //!
 //! **datadog.rs** is an API wrapper which provides support for sending HTTPS log
 //! events and stream events to Datadog. Post Stream event enables Pagerduty integration.
-//! Future work will include error report integration and datadog-agent support.
-//! Currently very alpha, though iqlusion will test in prod.
 //!
 
 #![warn(missing_docs)]
+use crate::{
+    prelude::*,
+};
 use hyper::{Body, Client, Method, Request};
 use hyper_tls::HttpsConnector;
 use serde::{ser, Serialize};
@@ -126,7 +127,7 @@ where
     }
 }
 
-/// Send a log event to Datadog via HTTPS. Requires DD_API_KEY env variable set.
+/// Send a log event to Datadog via HTTPS.
 /// https://docs.datadoghq.com/api/v1/logs/#send-logs
 pub async fn send_event(value: &Event, dd_api_key: String) -> Result<(), Error> {
     let event = serde_json::to_string(&value).unwrap();
@@ -151,7 +152,7 @@ pub async fn send_event(value: &Event, dd_api_key: String) -> Result<(), Error> 
     }
 }
 
-/// Send a stream event to Datadog via HTTPS. Requires DD_API_KEY env variable set.
+/// Send a stream event to Datadog via HTTPS.
 /// https://docs.datadoghq.com/api/latest/events/#post-an-event
 pub async fn send_stream_event(value: &StreamEvent, dd_api_key: String) -> Result<(), Error> {
     let stream_event = serde_json::to_string(&value).unwrap();
