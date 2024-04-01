@@ -8,7 +8,7 @@ abscissa_core = "0.7"
 abscissa_tokio = "0.7"
 clap = "4"
 futures = "0.3"
-hostname = "0.3"
+hostname = "0.4"
 hyper = "0.14"
 hyper-tls = "0.5"
 serde = { version = "1", features = ["serde_derive"] }
