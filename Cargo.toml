@@ -13,7 +13,7 @@ hyper = "0.14"
 hyper-tls = "0.5"
 serde = { version = "1", features = ["serde_derive"] }
 serde_json = "1.0"
-tendermint = "0.37"
+tendermint = "0.38"
 tendermint-rpc = { version = "0.37", features = ["http-client"] }
 thiserror = "1"
 tokio = "1"
