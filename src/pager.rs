@@ -16,10 +16,7 @@ use tower::{Service, ServiceExt};
 use tracing::warn;
 
 /// Monitor the pager service for alarms, reporting them to the configured alerting service.
-pub async fn monitor_pager_service(
-    alerting_interval: Duration,
-    mut service: tower::buffer::Buffer<PagerService, PagerRequest>,
-) {
+pub async fn monitor_pager_service(alerting_interval: Duration, mut service: PagerBuffer) {
     loop {
         let response = service
             .ready()
@@ -93,6 +90,12 @@ pub struct PagerService {
     /// Number of blocks after which we consider signing to be recovered.
     recovered_after_threshold: usize,
 }
+/// PagerFuture future returned from the service
+pub type PagerFuture =
+    Pin<Box<dyn Future<Output = Result<PagerResponse, PagerError>> + Send + 'static>>;
+
+/// PagerBuffer
+pub type PagerBuffer = tower::buffer::Buffer<PagerRequest, PagerFuture>;
 
 impl PagerService {
     pub fn new(missed_blocks_threshold: usize, recovered_after_threshold: usize) -> Self {
@@ -129,7 +132,7 @@ impl PagerService {
 impl Service<PagerRequest> for PagerService {
     type Response = PagerResponse;
     type Error = PagerError;
-    type Future = Pin<Box<dyn Future<Output = Result<PagerResponse, PagerError>> + Send + 'static>>;
+    type Future = PagerFuture;
 
     fn poll_ready(&mut self, _ctx: &mut Context<'_>) -> Poll<Result<(), PagerError>> {
         Poll::Ready(Ok(()))
