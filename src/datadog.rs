@@ -180,8 +180,8 @@ pub async fn send_stream_event(value: &StreamEvent, dd_api_key: String) -> Resul
 #[cfg(test)]
 mod tests {
     use super::{send_event, send_stream_event, Event, StreamEvent};
-    use crate::AlertType::Error;
-    use crate::Priority::Normal;
+    use super::AlertType::Error;
+    use super::Priority::Normal;
     use hostname;
     use std::collections::BTreeMap;
     use std::env;
