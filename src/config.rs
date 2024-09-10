@@ -33,7 +33,6 @@ pub struct ChainConfig {
     pub rpc_urls: Vec<String>,
 }
 
-
 /// Datadog Configuration
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]

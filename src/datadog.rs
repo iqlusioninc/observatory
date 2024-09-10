@@ -7,9 +7,7 @@
 //!
 
 #![warn(missing_docs)]
-use crate::{
-    prelude::*,
-};
+use crate::prelude::*;
 use hyper::{Body, Client, Method, Request};
 use hyper_tls::HttpsConnector;
 use serde::{ser, Serialize};
@@ -179,9 +177,9 @@ pub async fn send_stream_event(value: &StreamEvent, dd_api_key: String) -> Resul
 
 #[cfg(test)]
 mod tests {
-    use super::{send_event, send_stream_event, Event, StreamEvent};
     use super::AlertType::Error;
     use super::Priority::Normal;
+    use super::{send_event, send_stream_event, Event, StreamEvent};
     use hostname;
     use std::collections::BTreeMap;
     use std::env;

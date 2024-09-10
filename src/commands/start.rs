@@ -4,7 +4,7 @@ use crate::{
     chain_monitor::ChainMonitor,
     client_manager::ClientManager,
     config::{ChainConfig, ObservatoryConfig},
-    pager::{monitor_pager_service, PagerRequest, PagerService},
+    pager::{monitor_pager_service, PagerBuffer, PagerRequest, PagerService},
     prelude::*,
 };
 use abscissa_core::{config, Command, FrameworkError, Runnable};
@@ -72,10 +72,7 @@ impl config::Override<ObservatoryConfig> for StartCmd {
     }
 }
 
-async fn run_monitor(
-    config: ChainConfig,
-    mut pager_service: tower::buffer::Buffer<PagerService, PagerRequest>,
-) -> JoinHandle<()> {
+async fn run_monitor(config: ChainConfig, mut pager_service: PagerBuffer) -> JoinHandle<()> {
     tokio::spawn(async move {
         let chain_id = config.id;
         let validator_addr = config.validator_addr;
@@ -111,7 +108,7 @@ async fn run_monitor(
 
 async fn init_pager_monitor(
     alerting_interval: Duration,
-    pager_service: tower::buffer::Buffer<PagerService, PagerRequest>,
+    pager_service: PagerBuffer,
 ) -> JoinHandle<()> {
     tokio::spawn(
         async move { monitor_pager_service(alerting_interval, pager_service.clone()).await },
