@@ -132,7 +132,7 @@ impl PagerService {
 impl Service<PagerRequest> for PagerService {
     type Response = PagerResponse;
     type Error = PagerError;
-    type Future = Pin<Box<dyn Future<Output = Result<PagerResponse, PagerError>> + Send + 'static>>;
+    type Future = PagerFuture;
 
     fn poll_ready(&mut self, _ctx: &mut Context<'_>) -> Poll<Result<(), PagerError>> {
         Poll::Ready(Ok(()))
