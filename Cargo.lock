@@ -8,7 +8,7 @@ version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8346a52bf3fb445d5949d144c37360ad2f1d7950cfcc6d4e9e4999b1cd1bd42a"
 dependencies = [
- "abscissa_derive",
+ "abscissa_derive 0.7.0",
  "arc-swap",
  "backtrace",
  "canonical-path",
@@ -17,13 +17,39 @@ dependencies = [
  "fs-err",
  "once_cell",
  "regex",
- "secrecy",
+ "secrecy 0.8.0",
  "semver",
  "serde",
  "termcolor",
  "toml 0.5.11",
  "tracing",
  "tracing-log 0.1.4",
+ "tracing-subscriber",
+ "wait-timeout",
+]
+
+[[package]]
+name = "abscissa_core"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "de5df09bc18cb069dec8524aff811cbe9d7bf5f4b78ef739ef125a37b9d3f044"
+dependencies = [
+ "abscissa_derive 0.8.0",
+ "arc-swap",
+ "backtrace",
+ "canonical-path",
+ "clap",
+ "color-eyre",
+ "fs-err",
+ "once_cell",
+ "regex",
+ "secrecy 0.10.3",
+ "semver",
+ "serde",
+ "termcolor",
+ "toml 0.8.19",
+ "tracing",
+ "tracing-log 0.2.0",
  "tracing-subscriber",
  "wait-timeout",
 ]
@@ -42,12 +68,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "abscissa_derive"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e04c7df69b2c6b9b6dba8422d1295e58ac4bcfc7c9e7e7d4c55a38aaff2ad92a"
+dependencies = [
+ "ident_case",
+ "proc-macro2",
+ "quote",
+ "syn 1.0.109",
+ "synstructure",
+]
+
+[[package]]
 name = "abscissa_tokio"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c10b677dae5e1078f3d025bed5ad637da71d900e2126224bfaa1c270b26d2965"
 dependencies = [
- "abscissa_core",
+ "abscissa_core 0.7.0",
  "tokio",
 ]
 
@@ -968,7 +1007,7 @@ dependencies = [
 name = "observatory"
 version = "0.0.0"
 dependencies = [
- "abscissa_core",
+ "abscissa_core 0.8.1",
  "abscissa_tokio",
  "clap",
  "futures",
@@ -1428,6 +1467,16 @@ name = "secrecy"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9bd1c54ea06cfd2f6b63219704de0b9b4f72dcc2b8fdef820be6cd799780e91e"
+dependencies = [
+ "serde",
+ "zeroize",
+]
+
+[[package]]
+name = "secrecy"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a"
 dependencies = [
  "serde",
  "zeroize",
