@@ -1910,9 +1910,9 @@ dependencies = [
 
 [[package]]
 name = "tendermint"
-version = "0.40.1"
+version = "0.40.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9703e34d940c2a293804752555107f8dbe2b84ec4c6dd5203831235868105d2"
+checksum = "7bed57bd840305efef8e83b752dd63dde3bb0fc1c35b6490f0a4de3a0ffd8dd9"
 dependencies = [
  "bytes",
  "digest 0.10.7",
@@ -1952,9 +1952,9 @@ dependencies = [
 
 [[package]]
 name = "tendermint-proto"
-version = "0.40.1"
+version = "0.40.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9ae9e1705aa0fa5ecb2c6aa7fb78c2313c4a31158ea5f02048bf318f849352eb"
+checksum = "9a218320a6e92ac731ac094169cb742e3203a3ab24d30417b72cfdaab5d50c67"
 dependencies = [
  "bytes",
  "flex-error",
