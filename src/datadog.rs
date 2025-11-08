@@ -185,7 +185,7 @@ mod tests {
     use std::env;
     use std::time::SystemTime;
 
-    fn block_on<F: std::future::Future>(f: F) -> F::Output {
+    fn block_on<F: Future>(f: F) -> F::Output {
         tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
